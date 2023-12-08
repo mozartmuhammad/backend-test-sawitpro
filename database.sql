@@ -7,11 +7,12 @@
   In this assignment we will use PostgreSQL as the database.
   */
 
-/** This is test table. Remove this table and replace with your own tables. */
-CREATE TABLE test (
+CREATE TABLE users (
 	id serial PRIMARY KEY,
-	name VARCHAR ( 50 ) UNIQUE NOT NULL,
+	phone VARCHAR (20) UNIQUE NOT NULL,
+	name VARCHAR (60) NOT NULL,
+	password TEXT NOT NULL,
+  login_count BIGINT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE NULL
 );
-
-INSERT INTO test (name) VALUES ('test1');
-INSERT INTO test (name) VALUES ('test2');
