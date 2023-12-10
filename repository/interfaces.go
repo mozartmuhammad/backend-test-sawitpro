@@ -7,8 +7,6 @@ package repository
 import "context"
 
 type RepositoryInterface interface {
-	GetTestById(ctx context.Context, input GetTestByIdInput) (output GetTestByIdOutput, err error)
-
 	// User
 	Createuser(ctx context.Context, input RegisterUser) (output User, err error)
 	GetUserByID(ctx context.Context, id int64) (output User, err error)

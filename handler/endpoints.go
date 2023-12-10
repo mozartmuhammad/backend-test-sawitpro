@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -10,15 +9,6 @@ import (
 	"github.com/SawitProRecruitment/UserService/repository"
 	"github.com/labstack/echo/v4"
 )
-
-// This is just a test endpoint to get you started. Please delete this endpoint.
-// (GET /hello)
-func (s *Server) Hello(ctx echo.Context, params generated.HelloParams) error {
-
-	var resp generated.HelloResponse
-	resp.Message = fmt.Sprintf("Hello User %d", params.Id)
-	return ctx.JSON(http.StatusOK, resp)
-}
 
 // This function handles user registration.
 // (POST /users/register)
@@ -46,9 +36,9 @@ func (s *Server) UserRegister(ctx echo.Context) error {
 
 	input.Password, _ = HashPassword(input.Password)
 	_, err = s.Repository.GetUserByPhone(_ctx, payload.Phone)
-	if err != nil {
+	if err == nil {
 		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{
-			Message: err.Error(),
+			Message: "phone number already exist",
 		})
 	}
 

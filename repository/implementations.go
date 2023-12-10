@@ -3,24 +3,11 @@ package repository
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/lib/pq"
 )
 
-const (
-	UNIQUE_VIOLATION = "23505"
-)
-
 var ErrDuplicateData = errors.New("duplicate data")
-
-func (r *Repository) GetTestById(ctx context.Context, input GetTestByIdInput) (output GetTestByIdOutput, err error) {
-	err = r.Db.QueryRowContext(ctx, "SELECT name FROM test WHERE id = $1", input.Id).Scan(&output.Name)
-	if err != nil {
-		return
-	}
-	return
-}
 
 func (r *Repository) Createuser(ctx context.Context, input RegisterUser) (output User, err error) {
 	tx, err := r.Db.Begin()
@@ -42,8 +29,7 @@ func (r *Repository) Createuser(ctx context.Context, input RegisterUser) (output
 	if err != nil {
 		pqErr, ok := err.(*pq.Error)
 		if ok {
-			fmt.Println(pqErr.Code.Name())
-			if pqErr.Code == UNIQUE_VIOLATION {
+			if pqErr.Code.Name() == "unique_violation" {
 				return output, ErrDuplicateData
 			}
 		}
@@ -85,6 +71,7 @@ func (r *Repository) UpdateUser(ctx context.Context, input User) (output User, e
 	_, err = query.ExecContext(ctx,
 		input.Phone,
 		input.Name,
+		// WHERE
 		input.ID,
 	)
 	if err != nil {
@@ -123,7 +110,7 @@ func (r *Repository) IncreaseLoginCount(ctx context.Context, id int64) (err erro
 		return err
 	}
 
-	query, err := tx.PrepareContext(ctx, UpdateUserQuery)
+	query, err := tx.PrepareContext(ctx, UpdateLoginCount)
 	if err != nil {
 		return err
 	}

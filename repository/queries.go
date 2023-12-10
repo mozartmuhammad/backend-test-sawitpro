@@ -41,6 +41,6 @@ const (
 	UpdateLoginCount = `
 		UPDATE users
 		SET
-			login_count = login_count +1,
-		WHERE id = $3`
+			login_count = login_count + 1
+		WHERE id = $1`
 )

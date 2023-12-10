@@ -7,14 +7,6 @@ import (
 	"github.com/SawitProRecruitment/UserService/common"
 )
 
-type GetTestByIdInput struct {
-	Id string
-}
-
-type GetTestByIdOutput struct {
-	Name string
-}
-
 type RegisterUser struct {
 	Name     string `json:"name"`
 	Password string `json:"password"`

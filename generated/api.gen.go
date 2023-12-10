@@ -8,23 +8,16 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"fmt"
-	"net/http"
 	"net/url"
 	"path"
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
-	"github.com/oapi-codegen/runtime"
 )
 
 // ErrorResponse defines model for ErrorResponse.
 type ErrorResponse struct {
-	Message string `json:"message"`
-}
-
-// HelloResponse defines model for HelloResponse.
-type HelloResponse struct {
 	Message string `json:"message"`
 }
 
@@ -69,11 +62,6 @@ type UserResponse struct {
 	Phone string `json:"phone"`
 }
 
-// HelloParams defines parameters for Hello.
-type HelloParams struct {
-	Id int `form:"id" json:"id"`
-}
-
 // LoginJSONRequestBody defines body for Login for application/json ContentType.
 type LoginJSONRequestBody = LoginRequest
 
@@ -88,9 +76,6 @@ type UserRegisterJSONRequestBody = RegisterRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// This is just a test endpoint to get you started. Please delete this endpoint.
-	// (GET /hello)
-	Hello(ctx echo.Context, params HelloParams) error
 	// Login.
 	// (POST /login)
 	Login(ctx echo.Context) error
@@ -108,24 +93,6 @@ type ServerInterface interface {
 // ServerInterfaceWrapper converts echo contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler ServerInterface
-}
-
-// Hello converts echo context to params.
-func (w *ServerInterfaceWrapper) Hello(ctx echo.Context) error {
-	var err error
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params HelloParams
-	// ------------- Required query parameter "id" -------------
-
-	err = runtime.BindQueryParameter("form", true, true, "id", ctx.QueryParams(), &params.Id)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.Hello(ctx, params)
-	return err
 }
 
 // Login converts echo context to params.
@@ -192,7 +159,6 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/hello", wrapper.Hello)
 	router.POST(baseURL+"/login", wrapper.Login)
 	router.GET(baseURL+"/users", wrapper.GetUser)
 	router.PATCH(baseURL+"/users", wrapper.UpdateUser)
@@ -203,18 +169,16 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/9xWQU/bTBD9K6v9vmMUpwVVqo9ULUVqq4rCCXFYvJN4qb2zzIxBEcp/r3btYEwSQJRE",
-	"bU8YezLz5r3ZN3urC6wDevDCOr/VXJRQm/T4kQjpGDigZ4gvAmEAEgfpcw3MZpY+yDyAzjULOT/Ti8VI",
-	"E1w1jsDq/Owu8Hy0DMSLSyhEL0b6M1QVbrnGF5w5fwxXDbCslgiG+QbJrqkx0qFE/4zqbdioz/UIjE2t",
-	"uoRgilQb0bl2Xt7t67s0zgvMgGIewZ/gn8bkrF7GrkNzDDPHArSRF29qWM/JKxKWijzBW4/0N6lbJWhd",
-	"udNgjcApv4iaF3T/FIbdNP1oqS33G8Odn2JMVLkCOgxtVf316CRNvZMq/huRqh9A166IKa+B2KHXuX4z",
-	"nownMRIDeBOczvVeehXHS8rUSFZGu4lPM0i6xi6NOPRHVuetGaV4MjUIEOv87Fa7mP6qAZove8jb09X3",
-	"KNTAqPPOe3z0KpzH6JbfhOTtZBL/FOgFfIJiQqhckcBkl4y+N+P49D/BVOf6v6x366yz6mzooYlOC1yQ",
-	"C9JScwIsikAa8pGg/cn+q9Ue7og1tb+hqCk23qap4KauDc0jptKxcqwuGxZllESI4G1A50UJqhmImmOj",
-	"WAwJ2LH6XoFhUBYqEFASf76MH6fcWRUNNk0v8hp1k/92qgHLAdr5q9EwWDGL4fzH2VhsUf7hXnmO/JPd",
-	"yX9grOp5uT8ACXanXMPprG04locg8dRvSbqHi3DH6g2c9zni7e1OvE9IF85a8A+kOwRRUTJljZhxeyeQ",
-	"olxVrt9jWxJvdVnvWr7VTf3nihgrv99d5Q/op5UrHh78lrLBAN15QEbdadxs4y3XXdQ/aQkrF96/xtOX",
-	"yJVRHm6SxOM2AwNdL+9TDVU616VIyLOswsJUZVR6cb74FQAA//+1DiZIjQ4AAA==",
+	"H4sIAAAAAAAC/9xWwU7bQBD9FWvaoxWnBVWqj1QtQmovFE6Iw2JP7KX2zjI7BqHI/17tOomV2CGIJlHb",
+	"m7OezHvz3s5L5pBRbcmgEQfpHFxWYq3C41dm4kt0loxDf2CZLLJoDK9rdE4V4YU8W4QUnLA2BbRtDIwP",
+	"jWbMIb1ZFd7Gy0K6u8dMoI3hOxXaXOJDg06GEFY590Scj2DEYEsyr0DvyuK+1ws0to2qA4MZca0EUtBG",
+	"Pp3Cqo02ggWy7yP0C81uTjqHZe0Ym0sstBPkrboYVeO4JnsULIDs0K1n+ofSDQUag7u2uRK8dm+S5g3T",
+	"7+JwnKFfhDrwvL5cmxn5RpXOcMGhQ4UfF1fh1mup/EfPNPqJ/Kgz3/IR2WkykMKHyXQy9ZVk0SirIYWT",
+	"cOSvl5RhkKTyOxgGpM5YP6YSTeYih7RbUejIo5Mzyp99UUZG0IR6ZW2ls/CN5N6R6ePMP71nnEEK75I+",
+	"75JF2CVrKdSuSyTcYDjoHAhcP06n+8Ze+BvAc3QZayudeFfoJGKUho2X8HSP2OsJP4J9pvKo1yUG19S1",
+	"4uelHZNwmDQOOehS4Ihx5yj+YhzIus2sPLJ7a8v5GvNOjmfeN+I7nedoNqw7R4m8ZVGuRE26nw3JyqFz",
+	"fdQdyLxhnh/bvmGY/70meuTPx0P+QmZW6Wxz8TvJ1i7QKgMSXmzj9hjvtF5U/ZeRMPhP9M9k+pJ5pCKD",
+	"T8HiSdfBIT+GjL+ZQ8MVpFCK2DRJKspUVXqn29v2dwAAAP//LDUfw0wMAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

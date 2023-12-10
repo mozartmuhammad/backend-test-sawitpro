@@ -8,16 +8,13 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/labstack/echo/v4 v4.11.3
 	github.com/lib/pq v1.10.9
-	github.com/oapi-codegen/runtime v1.1.0
 	github.com/smartystreets/goconvey v1.8.1
 	golang.org/x/crypto v0.16.0
 )
 
 require (
-	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/swag v0.21.1 // indirect
-	github.com/google/uuid v1.4.0 // indirect
 	github.com/gopherjs/gopherjs v1.17.2 // indirect
 	github.com/invopop/yaml v0.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
@@ -29,6 +26,7 @@ require (
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/perimeterx/marshmallow v1.1.4 // indirect
 	github.com/smarty/assertions v1.15.0 // indirect
+	github.com/ugorji/go/codec v1.2.11 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	golang.org/x/net v0.17.0 // indirect
