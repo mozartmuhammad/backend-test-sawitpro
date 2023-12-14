@@ -15,10 +15,6 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestHello(t *testing.T) {
-
-}
-
 var (
 	server *Server
 
@@ -107,7 +103,7 @@ func TestLogin(t *testing.T) {
 					wantResp:       generated.LoginResponse{},
 				},
 				{
-					testID:   3,
+					testID:   5,
 					testDesc: "Success",
 					args: args{
 						payload: `{"phone":"+6280989444","password":"password1!A"}`,
@@ -194,37 +190,37 @@ func TestUserRegister(t *testing.T) {
 				},
 				{
 					testID:   3,
-					testDesc: "Failed - error GetUserByPhone",
-					args: args{
-						payload: `{"phone":"+6280989444","name":"albert einstein","password":"Password1!"}`,
-					},
-					mockFunc: func() {
-						mockRepository.EXPECT().GetUserByPhone(gomock.Any(), "+6280989444").Return(repository.User{}, fmt.Errorf("error"))
-					},
-					wantStatusCode: http.StatusBadRequest,
-					wantResp:       generated.RegisterResponse{},
-				},
-				{
-					testID:   3,
-					testDesc: "Failed - error Createuser",
+					testDesc: "Failed - phone number duplicate",
 					args: args{
 						payload: `{"phone":"+6280989444","name":"albert einstein","password":"Password1!"}`,
 					},
 					mockFunc: func() {
 						mockRepository.EXPECT().GetUserByPhone(gomock.Any(), "+6280989444").Return(repository.User{}, nil)
+					},
+					wantStatusCode: http.StatusBadRequest,
+					wantResp:       generated.RegisterResponse{},
+				},
+				{
+					testID:   4,
+					testDesc: "Failed - error Createuser",
+					args: args{
+						payload: `{"phone":"+6280989444","name":"albert einstein","password":"Password1!"}`,
+					},
+					mockFunc: func() {
+						mockRepository.EXPECT().GetUserByPhone(gomock.Any(), "+6280989444").Return(repository.User{}, fmt.Errorf("error"))
 						mockRepository.EXPECT().Createuser(gomock.Any(), gomock.Any()).Return(repository.User{}, fmt.Errorf("error"))
 					},
 					wantStatusCode: http.StatusBadRequest,
 					wantResp:       generated.RegisterResponse{},
 				},
 				{
-					testID:   3,
+					testID:   5,
 					testDesc: "Success",
 					args: args{
 						payload: `{"phone":"+6280989444","name":"albert einstein","password":"Password1!"}`,
 					},
 					mockFunc: func() {
-						mockRepository.EXPECT().GetUserByPhone(gomock.Any(), "+6280989444").Return(repository.User{}, nil)
+						mockRepository.EXPECT().GetUserByPhone(gomock.Any(), "+6280989444").Return(repository.User{}, fmt.Errorf("error"))
 						mockRepository.EXPECT().Createuser(gomock.Any(), gomock.Any()).Return(repository.User{
 							ID: 1,
 						}, nil)
@@ -293,6 +289,36 @@ func TestGetUser(t *testing.T) {
 				},
 				{
 					testID:   2,
+					testDesc: "Failed - error ValidateJWT - invalid auth",
+					args: args{
+						authorization: "BearereyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTcifQ.McgHf0xflNEkFStawm8KgdjyPHQ3he-jI_h8vqBqTZQ",
+					},
+					mockFunc:       func() {},
+					wantStatusCode: http.StatusForbidden,
+					wantResp:       generated.UserResponse{},
+				},
+				{
+					testID:   3,
+					testDesc: "Failed - error ValidateJWT - invalid auth",
+					args: args{
+						authorization: "Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.tyh-VfuzIxCyGYDlkBA7DfyjrqmSHu6pQ2hoZuFqUSLPNY2N0mpHb3nk5K17HWP_3cYHBw7AhHale5wky6-sVA",
+					},
+					mockFunc:       func() {},
+					wantStatusCode: http.StatusForbidden,
+					wantResp:       generated.UserResponse{},
+				},
+				{
+					testID:   4,
+					testDesc: "Failed - error ValidateJWT - invalid auth not integer",
+					args: args{
+						authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMWIifQ.4fWpYB6cdmowGR1g2dTiCPsYQ_8X-q_2oftgIsEy8cE",
+					},
+					mockFunc:       func() {},
+					wantStatusCode: http.StatusForbidden,
+					wantResp:       generated.UserResponse{},
+				},
+				{
+					testID:   5,
 					testDesc: "Failed - error GetUserByID",
 					args: args{
 						authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTcifQ.McgHf0xflNEkFStawm8KgdjyPHQ3he-jI_h8vqBqTZQ",
@@ -304,7 +330,7 @@ func TestGetUser(t *testing.T) {
 					wantResp:       generated.UserResponse{},
 				},
 				{
-					testID:   3,
+					testID:   6,
 					testDesc: "Success",
 					args: args{
 						authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTcifQ.McgHf0xflNEkFStawm8KgdjyPHQ3he-jI_h8vqBqTZQ",
@@ -384,6 +410,17 @@ func TestUpdateUser(t *testing.T) {
 				},
 				{
 					testID:   2,
+					testDesc: "Failed - error ValidateJWT - not integer",
+					args: args{
+						payload:       `{"phone":"+6280989444","name":"halo halo"}`,
+						authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMWIifQ.4fWpYB6cdmowGR1g2dTiCPsYQ_8X-q_2oftgIsEy8cE",
+					},
+					mockFunc:       func() {},
+					wantStatusCode: http.StatusForbidden,
+					wantResp:       generated.UserResponse{},
+				},
+				{
+					testID:   3,
 					testDesc: "Failed - error Bind",
 					args: args{
 						payload:       `{"phone":"+6280989444","name":"halo halo"1}`,
@@ -394,7 +431,7 @@ func TestUpdateUser(t *testing.T) {
 					wantResp:       generated.UserResponse{},
 				},
 				{
-					testID:   3,
+					testID:   4,
 					testDesc: "Failed - error validate",
 					args: args{
 						payload:       `{"phone":"+628098","name":"halo halo"}`,
@@ -407,7 +444,7 @@ func TestUpdateUser(t *testing.T) {
 					wantResp:       generated.UserResponse{},
 				},
 				{
-					testID:   4,
+					testID:   5,
 					testDesc: "Failed - error UpdateUser",
 					args: args{
 						payload:       `{"phone":"+6280989444","name":"halo halo"}`,
@@ -420,7 +457,7 @@ func TestUpdateUser(t *testing.T) {
 					wantResp:       generated.UserResponse{},
 				},
 				{
-					testID:   5,
+					testID:   6,
 					testDesc: "Success",
 					args: args{
 						payload:       `{"phone":"+6280989444","name":"halo halo"}`,

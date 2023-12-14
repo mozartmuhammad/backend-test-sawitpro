@@ -1,8 +1,7 @@
 package repository
 
 const (
-	InsertUserQuery = `
-		INSERT INTO users (phone, name, password)
+	InsertUserQuery = `INSERT INTO users (phone, name, password) 
 		VALUES ($1, $2, $3)
 		RETURNING id`
 

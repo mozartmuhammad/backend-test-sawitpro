@@ -13,6 +13,7 @@ require (
 )
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.1 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/swag v0.21.1 // indirect
 	github.com/gopherjs/gopherjs v1.17.2 // indirect

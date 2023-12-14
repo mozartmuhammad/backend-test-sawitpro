@@ -56,9 +56,7 @@ func (s *Server) GenerateJWT(userID int64) (token string, err error) {
 	})
 
 	token, err = claims.SignedString([]byte(s.SecretKey))
-	if err != nil {
-		return
-	}
+
 	return
 }
 
