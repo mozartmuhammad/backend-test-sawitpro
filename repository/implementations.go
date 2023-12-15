@@ -21,11 +21,12 @@ func (r *Repository) Createuser(ctx context.Context, input RegisterUser) (output
 	}
 	defer query.Close()
 
+	var id int64
 	err = query.QueryRowContext(ctx,
 		input.Phone,
 		input.Name,
 		input.Password,
-	).Scan(&output.ID)
+	).Scan(&id)
 	if err != nil {
 		pqErr, ok := err.(*pq.Error)
 		if ok {
@@ -41,6 +42,7 @@ func (r *Repository) Createuser(ctx context.Context, input RegisterUser) (output
 		return output, err
 	}
 
+	output.ID = id
 	return
 }
 
