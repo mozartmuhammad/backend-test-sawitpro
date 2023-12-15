@@ -7,12 +7,15 @@ import (
 	"github.com/SawitProRecruitment/UserService/common"
 )
 
+// A RegisterUser represents input for creating new users.
 type RegisterUser struct {
-	Name     string `json:"name"`
-	Password string `json:"password"`
-	Phone    string `json:"phone"`
+	Name     string
+	Password string
+	Phone    string
 }
 
+// Validate validate user registration input.
+// Return empty result if comply with given rules.
 func (t *RegisterUser) Validate() (result []string) {
 	result = append(result, common.ValidatePhone(t.Phone)...)
 	result = append(result, common.ValidateName(t.Name)...)
@@ -21,6 +24,7 @@ func (t *RegisterUser) Validate() (result []string) {
 	return
 }
 
+// An User represents an user data in this application.
 type User struct {
 	ID        int64
 	Phone     string
@@ -30,6 +34,8 @@ type User struct {
 	UpdateAt  *time.Time
 }
 
+// Validate validate user update input.
+// Return empty result if comply with given rules.
 func (t *User) Validate() (result []string) {
 	result = append(result, common.ValidatePhone(t.Phone)...)
 	result = append(result, common.ValidateName(t.Name)...)

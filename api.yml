@@ -29,13 +29,13 @@ paths:
               $ref: '#/components/schemas/RegisterRequest'
       responses:
         '200':
-          description: Success Response
+          description: Success create new user
           content:
             application/json:    
               schema:
                 $ref: "#/components/schemas/RegisterResponse"
         '400':
-          description: Bad Request
+          description: Invalid Request
           content:
             application/json:
               schema:
@@ -52,7 +52,7 @@ paths:
               $ref: '#/components/schemas/RegisterRequest'
       responses:
         '200':
-          description: Success Response
+          description: Success get user data
           content:
             application/json:    
               schema:
@@ -85,15 +85,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        '409':
-          description: Conflict
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
   /login:
     post:
-      summary: Login.
+      summary: Login user.
       operationId: login
       requestBody:
         required: true
@@ -103,7 +97,7 @@ paths:
               $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
-          description: Test return
+          description: Success login
           content:
             application/json:    
               schema:

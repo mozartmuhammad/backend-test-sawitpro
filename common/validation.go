@@ -6,6 +6,8 @@ import (
 	"unicode"
 )
 
+// ValidatePhone validate phone number with given rules.
+// A successful ValidatePhone returns empty errMsg.
 func ValidatePhone(phone string) (errMsg []string) {
 	if !strings.HasPrefix(phone, "+62") {
 		errMsg = append(errMsg, "Phone must start with +62")
@@ -22,6 +24,8 @@ func ValidatePhone(phone string) (errMsg []string) {
 	return
 }
 
+// ValidateName validate name with given rules.
+// A successful ValidateName returns empty errMsg.
 func ValidateName(name string) (errMsg []string) {
 	if len(name) < 3 {
 		errMsg = append(errMsg, "Name must be greater than 3")
@@ -32,6 +36,8 @@ func ValidateName(name string) (errMsg []string) {
 	return
 }
 
+// ValidatePassword validate name with given rules.
+// A successful ValidatePassword returns empty errMsg.
 func ValidatePassword(password string) (errMsg []string) {
 	if len(password) < 6 {
 		errMsg = append(errMsg, "Password must be greater than 6")

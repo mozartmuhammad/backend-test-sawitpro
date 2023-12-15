@@ -9,6 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// HashPassword hash and salt password.
 func HashPassword(password string) (string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
 	if err != nil {
@@ -17,10 +18,12 @@ func HashPassword(password string) (string, error) {
 	return string(hashedPassword), nil
 }
 
+// ComparePassword compare password and hashedPassword.
 func ComparePassword(password string, hashedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 
+// ValidateJWT validate jwt.
 func (s *Server) ValidateJWT(accessToken string) (token *jwt.Token, err error) {
 	accessToken, err = getToken(accessToken)
 	if err != nil {
@@ -41,6 +44,7 @@ func (s *Server) ValidateJWT(accessToken string) (token *jwt.Token, err error) {
 	return
 }
 
+// getToken split authorization and return auth.
 func getToken(auth string) (string, error) {
 	jwtToken := strings.Split(auth, " ")
 	if len(jwtToken) != 2 {
@@ -50,6 +54,7 @@ func getToken(auth string) (string, error) {
 	return jwtToken[1], nil
 }
 
+// GenerateJWT generate JWT token.
 func (s *Server) GenerateJWT(userID int64) (token string, err error) {
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": fmt.Sprint(userID),
@@ -60,6 +65,7 @@ func (s *Server) GenerateJWT(userID int64) (token string, err error) {
 	return
 }
 
+// GetJWTClaims jwt claims by key.
 func (s *Server) GetJWTClaims(token *jwt.Token, key string) string {
 	return token.Claims.(jwt.MapClaims)[key].(string)
 }
